@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const port = 3000;
 const app = express();
+const products = require("./data/products");
 
 app.use(express.json());
 
