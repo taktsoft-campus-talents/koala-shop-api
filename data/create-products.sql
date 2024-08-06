@@ -1,6 +1,6 @@
-DROP TABLE products;
+DROP TABLE koala_products;
 
-CREATE TABLE products
+CREATE TABLE koala_products
 (
 id SERIAL PRIMARY KEY,
 title VARCHAR (255),
@@ -10,7 +10,7 @@ image VARCHAR (255),
 category VARCHAR (255),
 leftInStock integer);
 
-INSERT INTO products 
+INSERT INTO koala_products 
 (title, description, price, image, category, leftInStock ) 
 VALUES
  ('Laptop',
@@ -20,7 +20,7 @@ VALUES
   'tech', 
   '30');
 
-  INSERT INTO products 
+  INSERT INTO koala_products 
   (title, description,price,image,category,leftInStock ) 
   VALUES 
   ('Portable Projector','
@@ -30,14 +30,14 @@ VALUES
    'tech', 
 '50');
 
-INSERT INTO products 
+INSERT INTO koala_products 
 (title, description,price,image,category,leftInStock ) 
 VALUES 
 ('Bluetooth Speaker',
 'DOSS SoundBox Pro+ Bluetooth Speaker with IPX6 Waterproof, 24 W Dual Bass Drivers, Stereo Pairing, Colourful Light',
 '159','speaker.jpg', 'tech', '100');
 
-INSERT INTO products 
+INSERT INTO koala_products 
 (title, description,price,image,category,leftInStock )
  VALUES 
  ('Koala Mug','Capacity: 325 ml
@@ -45,7 +45,7 @@ Colored throughout (colored inside and outside)
 Please wash by hand
 Material: 100% ceramic (glossy), ','21','mug.jpg', 'home', '300');
 
-INSERT INTO products 
+INSERT INTO koala_products 
 (title, description,price,image,category,leftInStock ) 
 VALUES 
 ('Koala T-Shirt','Retro Sunset Koala Bear Silhouette T-Shirt '
