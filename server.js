@@ -5,7 +5,6 @@ const port = 3000;
 const app = express();
 app.use(cors());
 app.use(express.json());
-// const products = require("./data/products");
 const { sql } = require("@vercel/postgres");
 
 app.get("/", (req, res) => {
