@@ -22,6 +22,18 @@ app.get("/products", async (req, res) => {
   }
 });
 
+app.get("/products/:id", async (req, res) => {
+  const { id } = await req.params;
+  const { rows } = await sql`SELECT * FROM koala_products WHERE id=${id}`;
+  console.log(id);
+  try {
+    res.json(rows);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Koala API running on port ${port}`);
 });
