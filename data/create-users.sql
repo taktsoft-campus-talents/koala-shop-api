@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS koala_users;
+
+CREATE TABLE koala_users
+(id SERIAL PRIMARY KEY,
+email VARCHAR (255) NOT NULL,
+name VARCHAR (255) NOT NULL,
+created_at CURRENT_TIMESTAMP,
+last_login TIMESTAMP);

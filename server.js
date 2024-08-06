@@ -1,22 +1,24 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const port = 3000;
-const app = express();
 const products = require("./data/products");
-const sql = require("@vercel/postgres");
+const { sql } = require("@vercel/postgres");
 const SQL_QUERIES = require("./data/sql-queries");
 const { GET_USER, INSERT_NEW_USER, LOGIN_USER } = SQL_QUERIES;
 
-app.use(cors());
+const port = 3000;
+const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
   return res.json({ message: "Welcome to the Koala API" });
 });
 
-app.get("/products", (req, res) => {
+app.get("/products", async (req, res) => {
+  const { rows: products } = await sql`SELECT * FROM koala_products`;
+
   try {
     res.json(products);
   } catch (err) {
