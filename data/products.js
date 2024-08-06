@@ -36,3 +36,5 @@ products = [
     leftInStock: 50,
   },
 ];
+
+module.exports = products;
