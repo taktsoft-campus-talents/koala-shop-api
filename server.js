@@ -4,6 +4,8 @@ const port = 3000;
 const app = express();
 const products = require("./data/products");
 
+app.use(cors());
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
