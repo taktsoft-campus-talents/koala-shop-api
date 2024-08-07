@@ -27,6 +27,16 @@ app.get("/products", async (req, res) => {
   }
 });
 
+app.get("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { rows } = await sql`SELECT * FROM koala_products WHERE id=${id}`;
+    res.json(rows);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 // If user exists, updates last_login date/time and returns user object
 // If user doesn't exist, creates a new user and returns user object
 app.post("/users/login", async (req, res) => {
