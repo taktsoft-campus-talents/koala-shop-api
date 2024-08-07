@@ -4,7 +4,7 @@ const cors = require("cors");
 const products = require("./data/products");
 const { sql } = require("@vercel/postgres");
 const SQL_QUERIES = require("./data/sql-queries.js");
-const { GET_USER, INSERT_NEW_USER, LOGIN_USER } = SQL_QUERIES;
+const { GET_USER, INSERT_NEW_USER, LOGIN_USER, GET_SPECIALS } = SQL_QUERIES;
 
 const port = 3000;
 const app = express();
@@ -12,11 +12,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   return res.json({ message: "Welcome to the Koala API" });
 });
 
-app.get("/products", async (req, res) => {
+app.get("/products", async (_, res) => {
   const { rows: products } = await sql`SELECT * FROM koala_products`;
 
   try {
@@ -46,7 +46,6 @@ app.post("/users/login", async (req, res) => {
     if (existedUser[0]) {
       const { id } = existedUser[0];
       const { rows: loggedUser } = await sql.query(LOGIN_USER, [id]);
-      console.log(loggedUser);
       res.status(200).json(loggedUser[0]);
     } else {
       const { rows: createdUser } = await sql.query(INSERT_NEW_USER, [
@@ -54,6 +53,20 @@ app.post("/users/login", async (req, res) => {
         name.trim(),
       ]);
       res.status(201).json(createdUser[0]);
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.get("/specials", async (_, res) => {
+  try {
+    const { rows: specials } = await sql.query(GET_SPECIALS);
+    if (specials.length > 0) {
+      res.status(200).json(specials);
+    } else {
+      res.status(204).json({ message: "No content" });
     }
   } catch (err) {
     console.log(err);
