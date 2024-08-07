@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const products = require("./data/products");
 const { sql } = require("@vercel/postgres");
-const SQL_QUERIES = require("./data/sql-queries");
+const SQL_QUERIES = require("./data/sql-queries.js");
 const { GET_USER, INSERT_NEW_USER, LOGIN_USER } = SQL_QUERIES;
 
 const port = 3000;
@@ -43,9 +43,10 @@ app.post("/users/login", async (req, res) => {
   const { email, name } = req.body;
   try {
     const { rows: existedUser } = await sql.query(GET_USER, [null, email]);
-    if (existedUser) {
-      const { id } = existedUser;
+    if (existedUser[0]) {
+      const { id } = existedUser[0];
       const { rows: loggedUser } = await sql.query(LOGIN_USER, [id]);
+      console.log(loggedUser);
       res.status(200).json(loggedUser[0]);
     } else {
       const { rows: createdUser } = await sql.query(INSERT_NEW_USER, [
