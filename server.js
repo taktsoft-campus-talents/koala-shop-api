@@ -34,7 +34,7 @@ app.get("/products", async (req, res) => {
   // SQL command
   let query = "SELECT * FROM koala_products";
 
-  // a list to save the parameters for the SQL request
+  // an array to save the parameters for the SQL request
   let queryParams = [];
 
   // check if there is a category and check which one
