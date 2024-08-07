@@ -23,10 +23,9 @@ app.get("/products", async (req, res) => {
 });
 
 app.get("/products/:id", async (req, res) => {
-  const { id } = await req.params;
-  const { rows } = await sql`SELECT * FROM koala_products WHERE id=${id}`;
-  console.log(id);
+  const { id } = req.params;
   try {
+    const { rows } = await sql`SELECT * FROM koala_products WHERE id=${id}`;
     res.json(rows);
   } catch (err) {
     console.log(err);
