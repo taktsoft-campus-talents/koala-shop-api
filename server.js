@@ -16,17 +16,6 @@ app.get("/", (req, res) => {
   return res.json({ message: "Welcome to the Koala API" });
 });
 
-// app.get("/products", async (req, res) => {
-//   const { rows: products } = await sql`SELECT * FROM koala_products`;
-
-//   try {
-//     res.json(products);
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// });
-
 app.get("/products", async (req, res) => {
   // extract parameters from URL
   const { category, sort, sortOrder } = req.query;
