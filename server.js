@@ -18,7 +18,9 @@ app.get("/", (req, res) => {
 
 app.get("/products", async (req, res) => {
   // extract parameters from URL
-  const { category, sort, sortOrder } = req.query;
+  const { category, sort } = req.query;
+  //set ascending sortOrder as default if none given
+  let sortOrder = req.query.sortOrder || "ascending";
 
   // SQL command
   let query = "SELECT * FROM koala_products";
@@ -34,7 +36,8 @@ app.get("/products", async (req, res) => {
     queryParams.push(category);
   }
 
-  if (sort) {
+  // add new variable, check if sort field is valid
+  if (sort && validSortFields.includes(sort)) {
     const orderBy = sortOrder === "ascending" ? "ASC" : "DESC";
     // add sort condition to the SQL command
     query += ` ORDER BY ${sort} ${orderBy}`;
