@@ -4,7 +4,7 @@ const cors = require("cors");
 const products = require("./data/products");
 const { sql } = require("@vercel/postgres");
 const SQL_QUERIES = require("./data/sql-queries");
-const { GET_USER, INSERT_NEW_USER, LOGIN_USER } = SQL_QUERIES;
+const { GET_USER, INSERT_NEW_USER, LOGIN_USER, PATCH_USER } = SQL_QUERIES;
 
 const port = 3000;
 const app = express();
@@ -64,6 +64,7 @@ app.get("/products/:id", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 // If user exists, updates last_login date/time and returns user object
 // If user doesn't exist, creates a new user and returns user object
 app.post("/users/login", async (req, res) => {
@@ -80,6 +81,24 @@ app.post("/users/login", async (req, res) => {
         name.trim(),
       ]);
       res.status(201).json(createdUser[0]);
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.patch("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  const { email, name } = req.body;
+  try {
+    const { rows: existedUser } = await sql.query(GET_USER, [id, null]);
+    if (existedUser.length > 0) {
+      const newEmail = email ? email : existedUser[0].email;
+      const newName = name ? name : existedUser[0].name;
+      await sql.query(PATCH_USER, [id, newEmail, newName]);
+    } else {
+      res.status(404).json({ message: `User with id ${id} not found` });
     }
   } catch (err) {
     console.log(err);
