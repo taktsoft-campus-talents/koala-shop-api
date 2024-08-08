@@ -47,7 +47,15 @@ app.get("/products", async (req, res) => {
 
   try {
     const { rows: products } = await sql.query(query, queryParams);
-    res.json(products);
+    res.json(
+      products.map((product) => {
+        const { leftinstock, ...rest } = product;
+        return {
+          ...rest,
+          leftInStock: leftinstock,
+        };
+      })
+    );
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Server error" });
