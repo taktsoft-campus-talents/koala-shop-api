@@ -4,7 +4,8 @@ const cors = require("cors");
 const products = require("./data/products");
 const { sql } = require("@vercel/postgres");
 const SQL_QUERIES = require("./data/sql-queries");
-const { GET_USER, INSERT_NEW_USER, LOGIN_USER, PATCH_USER } = SQL_QUERIES;
+const { GET_USER, INSERT_NEW_USER, LOGIN_USER, PATCH_USER, DELETE_USER } =
+  SQL_QUERIES;
 
 const port = 3000;
 const app = express();
@@ -90,13 +91,32 @@ app.post("/users/login", async (req, res) => {
 
 app.patch("/users/:id", async (req, res) => {
   const { id } = req.params;
-  const { email, name } = req.body;
+  const { name } = req.body;
   try {
     const { rows: existedUser } = await sql.query(GET_USER, [id, null]);
     if (existedUser.length > 0) {
-      const newEmail = email ? email : existedUser[0].email;
-      const newName = name ? name : existedUser[0].name;
-      await sql.query(PATCH_USER, [id, newEmail, newName]);
+      if (name && name.trim() !== "") {
+        await sql.query(PATCH_USER, [id, name]);
+        res.status(200).json({ message: `User with id ${id} was updated` });
+      } else {
+        res.status(400).json({ message: `New name is not provided or empty` });
+      }
+    } else {
+      res.status(404).json({ message: `User with id ${id} not found` });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.delete("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { rows: existedUser } = await sql.query(GET_USER, [id, null]);
+    if (existedUser.length > 0) {
+      await sql.query(DELETE_USER, [id]);
+      res.status(200).json({ message: `User with id ${id} was deleted` });
     } else {
       res.status(404).json({ message: `User with id ${id} not found` });
     }
