@@ -4,8 +4,16 @@ const cors = require("cors");
 const products = require("./data/products");
 const { sql } = require("@vercel/postgres");
 const SQL_QUERIES = require("./data/sql-queries");
-const { GET_USER, INSERT_NEW_USER, LOGIN_USER, PATCH_USER, DELETE_USER } =
-  SQL_QUERIES;
+const {
+  GET_USER,
+  INSERT_NEW_USER,
+  LOGIN_USER,
+  PATCH_USER,
+  DELETE_USER,
+  GET_PRODUCT,
+  INSERT_PRODUCT,
+  PATCH_PRODUCT,
+} = SQL_QUERIES;
 
 const port = 3000;
 const app = express();
@@ -95,7 +103,7 @@ app.post("/products", async (req, res) => {
     };
     if (isSyntaxError(payload)) {
       res.status(400).json({
-        message: `One of the propeties is missed or has invalid value`,
+        message: "One of the propeties is missed or has invalid value",
       });
     }
     const { title, category, description, image, price, leftInStock } = payload;
@@ -111,6 +119,59 @@ app.post("/products", async (req, res) => {
       res.status(200).json({ message: "New product was successfully added" });
     } else {
       throw new Error("Error adding new product");
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.patch("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  const payload = req.body;
+  try {
+    const isSyntaxError = (payload) => {
+      let isFoundError = false;
+      Object.values(payload).forEach((value) => {
+        if (
+          (typeof value === "number" && value < 0) ||
+          (typeof value === "string" && value.trim() === "")
+        )
+          isFoundError = true;
+      });
+      return isFoundError;
+    };
+    if (isSyntaxError(payload)) {
+      res.status(400).json({
+        message: "One of the propeties has invalid value",
+      });
+    }
+    const { rows: existedProduct } = await sql.query(GET_PRODUCT, [id]);
+    if (existedProduct.length > 0) {
+    } else {
+      res.status(404).json({
+        message: `Product with id ${id} not found`,
+      });
+    }
+    const requiredFields = [
+      "title",
+      "category",
+      "description",
+      "image",
+      "price",
+      "leftInStock",
+    ];
+    const queryParams = [id];
+    requiredFields.forEach((field) =>
+      queryParams.push(payload[field] ? payload[field] : existedProduct[field])
+    );
+    const { rowCount } = await sql.query(PATCH_PRODUCT, queryParams);
+    if (rowCount === 1) {
+      res
+        .status(200)
+        .json({ message: `Product id #${id} was successfully updated` });
+    } else {
+      throw new Error("Error changing product");
     }
   } catch (err) {
     console.log(err);
