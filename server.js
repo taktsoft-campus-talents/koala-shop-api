@@ -13,6 +13,9 @@ const {
   GET_PRODUCT,
   INSERT_PRODUCT,
   PATCH_PRODUCT,
+  DELETE_PRODUCT,
+  INSERT_OFFER,
+  DELETE_OFFER,
 } = SQL_QUERIES;
 
 const port = 3000;
@@ -169,10 +172,30 @@ app.patch("/products/:id", async (req, res) => {
     if (rowCount === 1) {
       res
         .status(200)
-        .json({ message: `Product id #${id} was successfully updated` });
+        .json({ message: `Product id #${id} was updated successfully` });
     } else {
       throw new Error("Error changing product");
     }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.delete("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { rows: existedProduct } = await sql.query(GET_PRODUCT, [id]);
+    if (existedProduct.length > 0) {
+    } else {
+      res.status(404).json({
+        message: `Product with id ${id} not found`,
+      });
+    }
+    await sql.query(DELETE_PRODUCT, queryParams);
+    res
+      .status(200)
+      .json({ message: `Product id #${id} was deleted successfully` });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Server error" });
@@ -233,6 +256,32 @@ app.delete("/users/:id", async (req, res) => {
     } else {
       res.status(404).json({ message: `User with id ${id} not found` });
     }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.post("/specials/:productId", async (req, res) => {
+  const { productId } = req.params;
+  try {
+    const { rows } = await sql.query(INSERT_OFFER, [productId]);
+    res.status(200).json({
+      message: `Offer for product id #${productId} was added (offer id - #${rows[0].id})`,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.delete("/specials/:offerId", async (req, res) => {
+  const { offerId } = req.params;
+  try {
+    await sql.query(DELETE_OFFER, [offerId]);
+    res
+      .status(200)
+      .json({ message: `Offer id #${offerId} was deleted sucessfully` });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Server error" });

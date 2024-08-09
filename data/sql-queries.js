@@ -12,5 +12,9 @@ const SQL_QUERIES = {
     "INSERT INTO koala_products (title, category, description, image, price, leftInStock) VALUES ($1, $2, $3, $4, $5, $6)",
   PATCH_PRODUCT:
     "UPDATE koala_products SET title = $2, category = $3, description = $4, image = $5, price = $6, leftInStock = $7 WHERE id = $1",
+  DELETE_PRODUCT: "DELETE FROM koala_products WHERE id = $1",
+  INSERT_OFFER:
+    "INSERT INTO koala_offers (product_id) VALUES ($1) RETURNING id",
+  DELETE_OFFER: "DELETE FROM koala_offers WHERE id = $1",
 };
 module.exports = SQL_QUERIES;
