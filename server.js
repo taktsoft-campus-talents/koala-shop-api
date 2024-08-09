@@ -91,13 +91,18 @@ app.post("/users/login", async (req, res) => {
     const { rows: existedUser } = await sql.query(GET_USER, [null, name]);
     if (existedUser[0]) {
       const { id } = existedUser[0];
-      const { rows: loggedUser } = await sql.query(LOGIN_USER, [id]);
-      res.status(200).json(loggedUser[0]);
+      await sql.query(LOGIN_USER, [id]); // update last login date/time
+      const { rows: user } = await sql.query(GET_USER, [id, null]);
+      res.status(200).json(user[0]);
     } else {
       const { rows: createdUser } = await sql.query(INSERT_NEW_USER, [
         name.trim(),
       ]);
-      res.status(201).json(createdUser[0]);
+      const { rows: user } = await sql.query(GET_USER, [
+        createdUser[0].id,
+        null,
+      ]);
+      res.status(201).json(user[0]);
     }
   } catch (err) {
     console.log(err);
