@@ -11,6 +11,7 @@ const SQL_QUERIES = {
     koala_products.title,
     koala_products.category,
     koala_products.description,
+    koala_products.teaser,
     koala_products.image,
     koala_products.price,
     koala_products.leftInStock AS "leftInStock"
