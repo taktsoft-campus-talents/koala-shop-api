@@ -43,10 +43,10 @@ INSERT INTO koala_products
  ('Koala Mug','Capacity: 325 ml
 Colored throughout (colored inside and outside)
 Please wash by hand
-Material: 100% ceramic (glossy), ',2100,'mug.jpg', 'home', 300);
+Material: 100% ceramic (glossy), ',2100,'koala-mug.jpg', 'home', 300);
 
 INSERT INTO koala_products 
 (title, description,price,image,category,leftInStock ) 
 VALUES 
 ('Koala T-Shirt','Retro Sunset Koala Bear Silhouette T-Shirt '
-,1900,'tshirt.jpg', 'home', 300);
+,1900,'koala-t-shirt.jpg', 'home', 300);
