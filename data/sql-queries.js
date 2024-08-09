@@ -6,7 +6,22 @@ const SQL_QUERIES = {
   LOGIN_USER:
     "UPDATE koala_users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING id, email, name, created_at, last_login",
   INSERT_REBATE: "INSERT INTO koala_rebates (user_id) VALUES ($1) RETURNING id",
+  GET_SPECIALS: `SELECT
+    koala_offers.id AS "offerId",
+    koala_products.id AS "productId",
+    koala_products.title,
+    koala_products.category,
+    koala_products.description,
+    koala_products.teaser,
+    koala_products.image,
+    koala_products.price,
+    koala_products.leftInStock AS "leftInStock"
+      FROM
+        koala_offers
+      INNER JOIN
+        koala_products
+      ON
+        koala_offers.product_id = koala_products.id;`,
 };
-module.exports = {
-  SQL_QUERIES,
-};
+
+module.exports = SQL_QUERIES;

@@ -4,7 +4,8 @@ const cors = require("cors");
 const products = require("./data/products");
 const { sql } = require("@vercel/postgres");
 const SQL_QUERIES = require("./data/sql-queries");
-const { GET_USER, INSERT_NEW_USER, LOGIN_USER, INSERT_REBATE } = SQL_QUERIES;
+const { GET_USER, INSERT_NEW_USER, LOGIN_USER, INSERT_REBATE, GET_SPECIALS } =
+  SQL_QUERIES;
 
 const port = 3000;
 const app = express();
@@ -86,16 +87,15 @@ app.get("/products/:id", async (req, res) => {
 // If user exists, updates last_login date/time and returns user object
 // If user doesn't exist, creates a new user and returns user object
 app.post("/users/login", async (req, res) => {
-  const { email, name } = req.body;
+  const { name } = req.body;
   try {
-    const { rows: existedUser } = await sql.query(GET_USER, [null, email]);
-    if (existedUser) {
-      const { id } = existedUser;
+    const { rows: existedUser } = await sql.query(GET_USER, [null, name]);
+    if (existedUser[0]) {
+      const { id } = existedUser[0];
       const { rows: loggedUser } = await sql.query(LOGIN_USER, [id]);
       res.status(200).json(loggedUser[0]);
     } else {
       const { rows: createdUser } = await sql.query(INSERT_NEW_USER, [
-        email.trim(),
         name.trim(),
       ]);
       res.status(201).json(createdUser[0]);
@@ -122,6 +122,16 @@ app.post("/users/scanrebate", async (req, res) => {
         existedUser.length === 0 ? `New user ${user} was created. ` : ""
       } Rebate for user ${user} was added sucessfully`,
     });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.get("/specials", async (_, res) => {
+  try {
+    const { rows: specials } = await sql.query(GET_SPECIALS);
+    res.status(200).json(specials);
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Server error" });
