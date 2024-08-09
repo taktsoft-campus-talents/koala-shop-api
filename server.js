@@ -4,7 +4,7 @@ const cors = require("cors");
 const products = require("./data/products");
 const { sql } = require("@vercel/postgres");
 const SQL_QUERIES = require("./data/sql-queries");
-const { GET_USER, INSERT_NEW_USER, LOGIN_USER } = SQL_QUERIES;
+const { GET_USER, INSERT_NEW_USER, LOGIN_USER, INSERT_REBATE } = SQL_QUERIES;
 
 const port = 3000;
 const app = express();
@@ -100,6 +100,26 @@ app.post("/users/login", async (req, res) => {
       ]);
       res.status(201).json(createdUser[0]);
     }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.post("/users/scanrebate", async (req, res) => {
+  const { user, type, data } = req.body;
+  try {
+    if (type !== "koala-shop" && data !== "discount") {
+      res.status(400).json({ message: `Not a valid rebate` });
+    }
+    const { rows: existedUser } = await sql.query(GET_USER, [null, user]);
+    if (existedUser.length === 0) {
+      res.status(404).json({ message: `User ${user} was not found` });
+    }
+    await sql.query(INSERT_REBATE, [existedUser[0].id]);
+    res
+      .status(201)
+      .json({ message: `Rebate for user ${user} was added sucessfully` });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Server error" });
