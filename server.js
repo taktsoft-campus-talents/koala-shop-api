@@ -62,6 +62,17 @@ app.get("/products", async (req, res) => {
   }
 });
 
+app.get("/products/categories", async (req, res) => {
+  try {
+    const { rows: categories } =
+      await sql`SELECT DISTINCT category FROM koala_products`;
+    res.json(categories);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 app.get("/products/:id", async (req, res) => {
   const { id } = req.params;
   try {
