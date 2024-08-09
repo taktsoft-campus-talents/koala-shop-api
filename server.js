@@ -112,9 +112,10 @@ app.post("/users/scanrebate", async (req, res) => {
     if (type !== "koala-shop" || data !== "discount") {
       res.status(400).json({ message: `Not a valid rebate` });
     }
-    const { rows: existedUser } = await sql.query(GET_USER, [null, user]);
+    let { rows: existedUser } = await sql.query(GET_USER, [null, user]);
     if (existedUser.length === 0) {
-      await sql.query(INSERT_NEW_USER, [user]);
+      const { rows } = await sql.query(INSERT_NEW_USER, [user]);
+      existedUser = rows;
     }
     await sql.query(INSERT_REBATE, [existedUser[0].id]);
     res.status(201).json({
