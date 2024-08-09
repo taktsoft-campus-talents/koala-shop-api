@@ -17,6 +17,7 @@ const SQL_QUERIES = {
     "INSERT INTO koala_users (name, created_at, last_login) VALUES ($1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING id",
   LOGIN_USER:
     "UPDATE koala_users SET last_login = CURRENT_TIMESTAMP WHERE id = $1",
+  INSERT_REBATE: "INSERT INTO koala_rebates (user_id) VALUES ($1) RETURNING id",
   GET_SPECIALS: `SELECT
     koala_offers.id AS "offerId",
     koala_products.id AS "productId",
@@ -34,4 +35,5 @@ const SQL_QUERIES = {
       ON
         koala_offers.product_id = koala_products.id;`,
 };
+
 module.exports = SQL_QUERIES;
