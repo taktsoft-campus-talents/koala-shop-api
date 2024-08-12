@@ -7,7 +7,7 @@ const SQL_QUERIES = require("./data/sql-queries");
 const { GET_USER, INSERT_NEW_USER, LOGIN_USER, INSERT_REBATE, GET_SPECIALS } =
   SQL_QUERIES;
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 const app = express();
 
 app.use(cors());
